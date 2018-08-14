@@ -1,0 +1,38 @@
+---
+# tasks file for egeneralov.golang
+
+- apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - g++
+    - gcc
+    - libc6-dev
+    - make
+    - pkg-config
+    - wget
+    - ca-certificates
+
+- get_url:
+    url: "https://dl.google.com/go/go{{ version }}.linux-amd64.tar.gz"
+    dest: "/opt/go{{ version }}.linux-amd64.tar.gz"
+
+- unarchive:
+    src: "/opt/go{{ version }}.linux-amd64.tar.gz"
+    dest: /usr/local
+
+- lineinfile:
+    dest: /etc/bash.bashrc
+    line: "{{ item }}"
+  with_items:
+    - export GOPATH=/go
+    - export PATH=/go/bin:/usr/local/go/bin:$PATH
+
+- file:
+    path: "/go/{{ item }}"
+    state: directory
+  with_items:
+    - src
+    - bin
+    - pkg
+
